@@ -106,16 +106,27 @@ class DuplicatesView(QWidget):
         main_layout.setSpacing(12)
 
         # Header
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
         title_label = QLabel("Duplicate File Finder & Quarantine")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        main_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
+
+        subtitle_label = QLabel(
+            "Find duplicate downloads taking up storage and safely isolate them without deleting."
+        )
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        main_layout.addLayout(header_layout)
 
         # Folder Picker & Scan Controls Box
         scan_box = QGroupBox("Scan Targets & Parameters")
         scan_layout = QVBoxLayout(scan_box)
+        scan_layout.setSpacing(10)
 
         folders_row = QHBoxLayout()
         self.folders_list = QListWidget()
@@ -140,6 +151,7 @@ class DuplicatesView(QWidget):
         scan_layout.addLayout(folders_row)
 
         options_row = QHBoxLayout()
+        options_row.setSpacing(10)
         self.recursive_cb = QCheckBox("Recursive")
         self.recursive_cb.setChecked(True)
         options_row.addWidget(self.recursive_cb)
@@ -155,8 +167,8 @@ class DuplicatesView(QWidget):
 
         options_row.addStretch()
 
-        self.scan_btn = QPushButton("Start Scan")
-        self.scan_btn.setStyleSheet("font-weight: bold; padding: 6px 14px;")
+        self.scan_btn = QPushButton("🔍 Start Scan")
+        self.scan_btn.setProperty("primary", True)
         self.scan_btn.clicked.connect(self.start_scan)
         options_row.addWidget(self.scan_btn)
 
@@ -179,9 +191,12 @@ class DuplicatesView(QWidget):
         groups_container = QWidget()
         groups_layout = QVBoxLayout(groups_container)
         groups_layout.setContentsMargins(0, 0, 0, 0)
+        groups_layout.setSpacing(8)
 
         filter_row = QHBoxLayout()
-        filter_row.addWidget(QLabel("Show Groups:"))
+        lbl_show = QLabel("Show Groups:")
+        lbl_show.setStyleSheet("color: #94a3b8;")
+        filter_row.addWidget(lbl_show)
         self.kind_combo = QComboBox()
         self.kind_combo.addItem("All Duplicate Groups", "all")
         self.kind_combo.addItem("Exact Duplicates Only", "exact")
@@ -194,8 +209,11 @@ class DuplicatesView(QWidget):
 
         self.table = QTableView()
         self.table.setModel(self._model)
+        self.table.setAlternatingRowColors(True)
+        self.table.setShowGrid(False)
         self.table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.table.verticalHeader().setDefaultSectionSize(32)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.selectionModel().selectionChanged.connect(self._on_group_selected)

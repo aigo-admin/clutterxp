@@ -47,24 +47,39 @@ class HistoryView(QWidget):
         main_layout.setSpacing(12)
 
         # Title
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
         title_label = QLabel("Operations History & Journal")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        main_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
+
+        subtitle_label = QLabel(
+            "Every move is tracked in a local journal. Restore individual files or entire batches."
+        )
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        main_layout.addLayout(header_layout)
 
         # Filter Bar
         filter_box = QGroupBox("Filter Operations")
         filter_layout = QHBoxLayout(filter_box)
+        filter_layout.setSpacing(8)
 
-        filter_layout.addWidget(QLabel("Batch ID:"))
+        lbl_batch = QLabel("Batch ID:")
+        lbl_batch.setStyleSheet("color: #94a3b8;")
+        filter_layout.addWidget(lbl_batch)
         self.batch_spin = QSpinBox()
         self.batch_spin.setRange(0, 1_000_000)
         self.batch_spin.setSpecialValueText("All")
         filter_layout.addWidget(self.batch_spin)
 
-        filter_layout.addWidget(QLabel("Status:"))
+        lbl_status = QLabel("Status:")
+        lbl_status.setStyleSheet("color: #94a3b8;")
+        filter_layout.addWidget(lbl_status)
         self.status_combo = QComboBox()
         self.status_combo.addItem("All", None)
         self.status_combo.addItem("done", OpStatus.DONE)
@@ -74,17 +89,22 @@ class HistoryView(QWidget):
         self.status_combo.addItem("pending", OpStatus.PENDING)
         filter_layout.addWidget(self.status_combo)
 
-        filter_layout.addWidget(QLabel("Rule:"))
+        lbl_rule = QLabel("Rule:")
+        lbl_rule.setStyleSheet("color: #94a3b8;")
+        filter_layout.addWidget(lbl_rule)
         self.rule_filter_edit = QLineEdit()
         self.rule_filter_edit.setPlaceholderText("Filter rule name...")
         filter_layout.addWidget(self.rule_filter_edit)
 
-        filter_layout.addWidget(QLabel("Path Contains:"))
+        lbl_path = QLabel("Path:")
+        lbl_path.setStyleSheet("color: #94a3b8;")
+        filter_layout.addWidget(lbl_path)
         self.path_filter_edit = QLineEdit()
         self.path_filter_edit.setPlaceholderText("Search file path...")
         filter_layout.addWidget(self.path_filter_edit)
 
         self.filter_btn = QPushButton("Filter")
+        self.filter_btn.setProperty("primary", True)
         self.filter_btn.clicked.connect(self.refresh)
         filter_layout.addWidget(self.filter_btn)
 
@@ -93,8 +113,11 @@ class HistoryView(QWidget):
         # Operations Table
         self.table = QTableView()
         self.table.setModel(self._model)
+        self.table.setAlternatingRowColors(True)
+        self.table.setShowGrid(False)
         self.table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.table.verticalHeader().setDefaultSectionSize(32)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.selectionModel().selectionChanged.connect(self._on_selection_changed)

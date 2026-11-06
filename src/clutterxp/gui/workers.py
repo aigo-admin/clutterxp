@@ -5,6 +5,7 @@ Ensures the UI thread never performs blocking file I/O, DB access, or hashing.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import threading
 from collections.abc import Callable
@@ -89,12 +90,19 @@ class TaskWorker(QRunnable):
                 call_kwargs["progress"] = self._progress_cb
 
             res = self.fn(*self.args, **call_kwargs)
-            self.signals.result.emit(res)
+            try:
+                self.signals.result.emit(res)
+            except RuntimeError:
+                return
         except Exception as exc:
             logger.exception("Task worker encountered exception: %s", exc)
-            self.signals.error.emit(exc)
+            try:
+                self.signals.error.emit(exc)
+            except RuntimeError:
+                return
         finally:
-            self.signals.finished.emit()
+            with contextlib.suppress(RuntimeError):
+                self.signals.finished.emit()
 
 
 def run_in_worker(

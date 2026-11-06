@@ -40,12 +40,22 @@ class SettingsView(QWidget):
         main_layout.setSpacing(16)
 
         # Title
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
         title_label = QLabel("Settings & Configuration")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        main_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
+
+        subtitle_label = QLabel(
+            "Global preferences, direct configuration file editing, and live validation checks."
+        )
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        main_layout.addLayout(header_layout)
 
         # Config File Card
         file_box = QGroupBox("Configuration File")

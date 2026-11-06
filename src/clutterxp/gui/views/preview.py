@@ -49,25 +49,42 @@ class PreviewView(QWidget):
         main_layout.setSpacing(12)
 
         # Header
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
         title_label = QLabel("Preview & Organize")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        main_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
+
+        subtitle_label = QLabel(
+            "Preview exactly what will move before touching any files. Zero risk, 100% undoable."
+        )
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        main_layout.addLayout(header_layout)
 
         # Top Control Row: Scan Target + Scan Button
         target_row = QHBoxLayout()
-        target_row.addWidget(QLabel("Target Folder (optional):"))
+        target_row.setSpacing(8)
+        lbl_target = QLabel("Target Folder:")
+        lbl_target.setStyleSheet("color: #cbd5e1; font-weight: 500;")
+        target_row.addWidget(lbl_target)
+
         self.path_edit = QLineEdit()
-        self.path_edit.setPlaceholderText("Default: all configured watch folders")
-        target_row.addWidget(self.path_edit)
+        self.path_edit.setPlaceholderText(
+            "Default: all configured watch folders (e.g. ~/Downloads)"
+        )
+        target_row.addWidget(self.path_edit, stretch=1)
 
         self.browse_btn = QPushButton("Browse...")
         self.browse_btn.clicked.connect(self._on_browse)
         target_row.addWidget(self.browse_btn)
 
-        self.scan_btn = QPushButton("Scan Plan")
+        self.scan_btn = QPushButton("🔍 Scan Plan")
+        self.scan_btn.setProperty("primary", True)
         self.scan_btn.clicked.connect(self.scan)
         target_row.addWidget(self.scan_btn)
 
@@ -75,7 +92,11 @@ class PreviewView(QWidget):
 
         # Filter & Selection Controls Row
         filter_row = QHBoxLayout()
-        filter_row.addWidget(QLabel("Filter:"))
+        filter_row.setSpacing(8)
+        lbl_filter = QLabel("Filter:")
+        lbl_filter.setStyleSheet("color: #94a3b8;")
+        filter_row.addWidget(lbl_filter)
+
         self.filter_combo = QComboBox()
         self.filter_combo.addItem("All Items", "all")
         self.filter_combo.addItem("Will Move Only", "will_move")
@@ -93,7 +114,7 @@ class PreviewView(QWidget):
         self.deselect_all_btn.clicked.connect(lambda: self._model.toggle_all(False))
         filter_row.addWidget(self.deselect_all_btn)
 
-        self.inspect_btn = QPushButton("Inspect Candidates / Rule")
+        self.inspect_btn = QPushButton("Inspect Ambiguous")
         self.inspect_btn.setEnabled(False)
         self.inspect_btn.clicked.connect(self._on_inspect_ambiguous)
         filter_row.addWidget(self.inspect_btn)
@@ -104,8 +125,11 @@ class PreviewView(QWidget):
         # Plan Table
         self.table = QTableView()
         self.table.setModel(self._model)
+        self.table.setAlternatingRowColors(True)
+        self.table.setShowGrid(False)
         self.table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.table.verticalHeader().setDefaultSectionSize(32)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.selectionModel().selectionChanged.connect(self._on_selection_changed)
@@ -120,12 +144,14 @@ class PreviewView(QWidget):
         # Bottom Row: Summary & Apply Button
         bottom_row = QHBoxLayout()
         self.summary_label = QLabel("No active plan. Click 'Scan Plan' to generate preview.")
+        self.summary_label.setStyleSheet("color: #94a3b8; font-size: 13px;")
         bottom_row.addWidget(self.summary_label)
 
         bottom_row.addStretch()
 
         self.apply_btn = QPushButton("Apply Selected Moves")
-        self.apply_btn.setStyleSheet("font-weight: bold; padding: 6px 16px;")
+        self.apply_btn.setProperty("success", True)
+        self.apply_btn.setStyleSheet("font-weight: bold; padding: 7px 20px; font-size: 13px;")
         self.apply_btn.clicked.connect(self._on_apply)
         bottom_row.addWidget(self.apply_btn)
 

@@ -28,6 +28,7 @@ from PySide6.QtWidgets import (
 
 from clutterxp import paths
 from clutterxp.gui.api import GuiApi
+from clutterxp.gui.theme import apply_theme
 from clutterxp.gui.views import (
     DashboardView,
     DuplicatesView,
@@ -45,8 +46,13 @@ class ClutterXPMainWindow(QMainWindow):
     def __init__(self, api: GuiApi | None = None, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.api = api if api is not None else GuiApi()
-        self.setWindowTitle("ClutterXP - Intelligent File Organizer")
-        self.resize(1000, 700)
+        self.setWindowTitle("ClutterXP - Safe, Intelligent File Organizer")
+        self.resize(1080, 720)
+        self.setMinimumSize(880, 580)
+
+        app_instance = QApplication.instance()
+        if app_instance is not None:
+            apply_theme(app_instance)
 
         self._init_ui()
 
@@ -181,6 +187,7 @@ def main() -> None:
     if app is None:
         app = QApplication(sys.argv)
     app.setApplicationName("ClutterXP")
+    apply_theme(app)
 
     # Hook up SIGINT to cleanly exit
     signal.signal(signal.SIGINT, lambda *_: app.quit())

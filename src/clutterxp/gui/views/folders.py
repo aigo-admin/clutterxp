@@ -191,16 +191,27 @@ class FoldersView(QWidget):
 
         # Header with Title and Watcher Control
         top_bar = QHBoxLayout()
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
         title_label = QLabel("Watch Folders")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        top_bar.addWidget(title_label)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
+
+        subtitle_label = QLabel("Directories monitored by ClutterXP for automatic, quiet sorting.")
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        top_bar.addLayout(header_layout)
 
         top_bar.addStretch()
 
         self.watcher_status_label = QLabel("Watcher: Checking...")
+        self.watcher_status_label.setStyleSheet(
+            "color: #a5b4fc; font-weight: 500; font-size: 13px; margin-right: 8px;"
+        )
         top_bar.addWidget(self.watcher_status_label)
 
         self.watcher_toggle_btn = QPushButton("Start Watcher")
@@ -212,15 +223,19 @@ class FoldersView(QWidget):
         # Table of folders
         self.table = QTableView()
         self.table.setModel(self._model)
+        self.table.setAlternatingRowColors(True)
+        self.table.setShowGrid(False)
         self.table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.table.verticalHeader().setDefaultSectionSize(32)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setStretchLastSection(True)
         main_layout.addWidget(self.table, stretch=1)
 
         # Buttons row
         btn_row = QHBoxLayout()
-        self.add_btn = QPushButton("Add Folder...")
+        self.add_btn = QPushButton("+ Add Folder...")
+        self.add_btn.setProperty("primary", True)
         self.add_btn.clicked.connect(self._on_add_folder)
         btn_row.addWidget(self.add_btn)
 

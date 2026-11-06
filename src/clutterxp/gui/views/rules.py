@@ -138,7 +138,42 @@ class RuleEditorDialog(QDialog):
 
     def _init_ui(self, rule: RuleSpec | None) -> None:
         layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+
+        # Quick Presets Row for instant, simple setup
+        preset_box = QHBoxLayout()
+        preset_box.addWidget(QLabel("Quick Presets:"))
+        preset_invoices = QPushButton("📄 Invoices")
+        preset_invoices.clicked.connect(
+            lambda: self._apply_preset(
+                "Invoices",
+                "invoice, receipt, bill, statement",
+                "pdf",
+                "~/Documents/Invoices/{year}/{month}",
+            )
+        )
+        preset_box.addWidget(preset_invoices)
+
+        preset_photos = QPushButton("🖼️ Photos")
+        preset_photos.clicked.connect(
+            lambda: self._apply_preset(
+                "Photos", "", "jpg, jpeg, png, heic, raw", "~/Pictures/{year}/{month}"
+            )
+        )
+        preset_box.addWidget(preset_photos)
+
+        preset_installers = QPushButton("📦 Installers")
+        preset_installers.clicked.connect(
+            lambda: self._apply_preset(
+                "Installers", "", "deb, rpm, appimage, tar.gz, iso", "~/Downloads/Installers"
+            )
+        )
+        preset_box.addWidget(preset_installers)
+        preset_box.addStretch()
+        layout.addLayout(preset_box)
+
         form = QFormLayout()
+        form.setSpacing(10)
 
         self.name_edit = QLineEdit(rule.name if rule else "")
         self.name_edit.setPlaceholderText("e.g. Invoices, Receipts, Photos")
@@ -177,10 +212,10 @@ class RuleEditorDialog(QDialog):
 
         # Template helper chips/buttons
         chips_layout = QHBoxLayout()
-        chips_layout.addWidget(QLabel("Insert template:"))
+        chips_layout.addWidget(QLabel("Insert placeholder:"))
         for placeholder in ["{year}", "{month}", "{day}", "{ext}", "{rule}"]:
             btn = QPushButton(placeholder)
-            btn.setMaximumWidth(60)
+            btn.setMaximumWidth(65)
             btn.clicked.connect(lambda _, ph=placeholder: self._insert_placeholder(ph))
             chips_layout.addWidget(btn)
         chips_layout.addStretch()
@@ -235,6 +270,14 @@ class RuleEditorDialog(QDialog):
         button_box.accepted.connect(self._on_save)
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)
+
+    def _apply_preset(self, name: str, keywords: str, extensions: str, dest: str) -> None:
+        """Pre-fill fields from a selected preset."""
+        self.name_edit.setText(name)
+        self.keywords_edit.setText(keywords)
+        self.extensions_edit.setText(extensions)
+        self.dest_edit.setText(dest)
+        self._update_dest_preview()
 
     def _insert_placeholder(self, placeholder: str) -> None:
         self.dest_edit.insert(placeholder)
@@ -335,20 +378,30 @@ class RulesView(QWidget):
         rules_layout = QVBoxLayout(rules_container)
         rules_layout.setContentsMargins(0, 0, 0, 0)
 
-        header_row = QHBoxLayout()
-        title_label = QLabel("Rules")
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
+        title_label = QLabel("Rules & Organization")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        header_row.addWidget(title_label)
-        header_row.addStretch()
-        rules_layout.addLayout(header_row)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
+
+        subtitle_label = QLabel(
+            "Define sorting rules by keyword, extension, and date. Test them in real-time below."
+        )
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        rules_layout.addLayout(header_layout)
 
         self.rules_table = QTableView()
         self.rules_table.setModel(self._rules_model)
+        self.rules_table.setAlternatingRowColors(True)
+        self.rules_table.setShowGrid(False)
         self.rules_table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self.rules_table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.rules_table.verticalHeader().setDefaultSectionSize(32)
         self.rules_table.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.ResizeToContents
         )
@@ -357,7 +410,8 @@ class RulesView(QWidget):
         rules_layout.addWidget(self.rules_table)
 
         btn_row = QHBoxLayout()
-        self.add_btn = QPushButton("Add Rule...")
+        self.add_btn = QPushButton("+ Add Rule...")
+        self.add_btn.setProperty("primary", True)
         self.add_btn.clicked.connect(self._on_add_rule)
         btn_row.addWidget(self.add_btn)
 
@@ -383,20 +437,28 @@ class RulesView(QWidget):
         splitter.addWidget(rules_container)
 
         # Bottom section: Live Test Filename Trace
-        trace_group = QGroupBox("Test Filename (Live Trace)")
+        trace_group = QGroupBox("Test Filename (Live Real-Time Match Trace)")
         trace_layout = QVBoxLayout(trace_group)
+        trace_layout.setSpacing(10)
 
         input_row = QHBoxLayout()
-        input_row.addWidget(QLabel("Test Filename:"))
+        lbl_test = QLabel("Test Filename:")
+        lbl_test.setStyleSheet("color: #cbd5e1; font-weight: 500;")
+        input_row.addWidget(lbl_test)
         self.test_input = QLineEdit()
-        self.test_input.setPlaceholderText("Type a filename or path to see real-time trace...")
+        self.test_input.setPlaceholderText(
+            "Type a filename (e.g. invoice_march.pdf) to see matching rules instantly..."
+        )
         self.test_input.textChanged.connect(self.evaluate_trace)
         input_row.addWidget(self.test_input)
         trace_layout.addLayout(input_row)
 
         self.trace_table = QTableView()
         self.trace_table.setModel(self._trace_model)
+        self.trace_table.setAlternatingRowColors(True)
+        self.trace_table.setShowGrid(False)
         self.trace_table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
+        self.trace_table.verticalHeader().setDefaultSectionSize(30)
         self.trace_table.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.ResizeToContents
         )

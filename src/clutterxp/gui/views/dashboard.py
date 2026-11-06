@@ -10,7 +10,6 @@ from typing import Any
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QFrame,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -45,31 +44,43 @@ class DashboardView(QWidget):
         main_layout.setContentsMargins(16, 16, 16, 16)
         main_layout.setSpacing(16)
 
-        # Title
-        title_label = QLabel("ClutterXP Dashboard")
+        # Header
+        header_layout = QVBoxLayout()
+        header_layout.setSpacing(2)
+        title_label = QLabel("Dashboard")
         title_font = title_label.font()
-        title_font.setPointSize(16)
+        title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        main_layout.addWidget(title_label)
+        title_label.setStyleSheet("color: #f8fafc;")
+        header_layout.addWidget(title_label)
 
-        # Top row: Watcher Card & Stats Grid
+        subtitle_label = QLabel(
+            "Overview of file activity, background watcher, and quick controls."
+        )
+        subtitle_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        header_layout.addWidget(subtitle_label)
+        main_layout.addLayout(header_layout)
+
+        # Top row: Watcher Card & Stats Grid & Quick Actions
         top_row = QHBoxLayout()
         top_row.setSpacing(16)
 
         # Watcher State Card
         self.watcher_group = QGroupBox("Watcher Daemon")
         watcher_layout = QVBoxLayout(self.watcher_group)
-        watcher_layout.setSpacing(8)
+        watcher_layout.setSpacing(10)
 
         self.watcher_status_label = QLabel("Status: Checking...")
         status_font = self.watcher_status_label.font()
         status_font.setBold(True)
         self.watcher_status_label.setFont(status_font)
+        self.watcher_status_label.setStyleSheet("color: #a5b4fc; font-size: 13px;")
         watcher_layout.addWidget(self.watcher_status_label)
 
         self.watcher_folders_label = QLabel("Watched Folders: None")
         self.watcher_folders_label.setWordWrap(True)
+        self.watcher_folders_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
         watcher_layout.addWidget(self.watcher_folders_label)
 
         self.watcher_toggle_btn = QPushButton("Toggle Watcher")
@@ -83,19 +94,31 @@ class DashboardView(QWidget):
         stats_group = QGroupBox("Quick Stats")
         stats_layout = QGridLayout(stats_group)
         stats_layout.setSpacing(12)
+        stats_layout.setContentsMargins(14, 16, 14, 14)
 
-        stats_layout.addWidget(QLabel("Configured Folders:"), 0, 0)
+        lbl_folders = QLabel("Watched Folders:")
+        lbl_folders.setStyleSheet("color: #94a3b8;")
+        stats_layout.addWidget(lbl_folders, 0, 0)
         self.folders_count_label = QLabel("0")
+        self.folders_count_label.setStyleSheet(
+            "font-size: 16px; font-weight: bold; color: #818cf8;"
+        )
         self.folders_count_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         stats_layout.addWidget(self.folders_count_label, 0, 1)
 
-        stats_layout.addWidget(QLabel("Today's Moves:"), 1, 0)
+        lbl_today = QLabel("Today's Moves:")
+        lbl_today.setStyleSheet("color: #94a3b8;")
+        stats_layout.addWidget(lbl_today, 1, 0)
         self.today_moves_label = QLabel("0")
+        self.today_moves_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #34d399;")
         self.today_moves_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         stats_layout.addWidget(self.today_moves_label, 1, 1)
 
-        stats_layout.addWidget(QLabel("Active Rules:"), 2, 0)
+        lbl_rules = QLabel("Active Rules:")
+        lbl_rules.setStyleSheet("color: #94a3b8;")
+        stats_layout.addWidget(lbl_rules, 2, 0)
         self.rules_count_label = QLabel("0")
+        self.rules_count_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #fbbf24;")
         self.rules_count_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         stats_layout.addWidget(self.rules_count_label, 2, 1)
 
@@ -107,15 +130,16 @@ class DashboardView(QWidget):
         actions_layout = QVBoxLayout(actions_group)
         actions_layout.setSpacing(8)
 
-        self.scan_btn = QPushButton("Scan Folders")
-        self.scan_btn.clicked.connect(lambda: self.navigate_requested.emit("preview"))
-        actions_layout.addWidget(self.scan_btn)
-
-        self.organize_btn = QPushButton("Organize (Preview)")
+        self.organize_btn = QPushButton("⚡ Organize (Preview)")
+        self.organize_btn.setProperty("primary", True)
         self.organize_btn.clicked.connect(lambda: self.navigate_requested.emit("preview"))
         actions_layout.addWidget(self.organize_btn)
 
-        self.undo_last_btn = QPushButton("Undo Last Batch")
+        self.scan_btn = QPushButton("🔍 Scan Folders")
+        self.scan_btn.clicked.connect(lambda: self.navigate_requested.emit("preview"))
+        actions_layout.addWidget(self.scan_btn)
+
+        self.undo_last_btn = QPushButton("↩️ Undo Last Batch")
         self.undo_last_btn.clicked.connect(self._on_undo_last_batch)
         actions_layout.addWidget(self.undo_last_btn)
 
@@ -124,20 +148,18 @@ class DashboardView(QWidget):
 
         main_layout.addLayout(top_row)
 
-        # Separator line
-        line = QFrame()
-        line.setFrameShape(QFrame.Shape.HLine)
-        line.setFrameShadow(QFrame.Shadow.Sunken)
-        main_layout.addWidget(line)
-
         # Bottom section: Recent Operations
         recent_group = QGroupBox("Recent Operations (Last 5)")
         recent_layout = QVBoxLayout(recent_group)
+        recent_layout.setSpacing(10)
 
         self.recent_table = QTableView()
         self.recent_table.setModel(self._history_model)
+        self.recent_table.setAlternatingRowColors(True)
+        self.recent_table.setShowGrid(False)
         self.recent_table.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         self.recent_table.setSelectionMode(QTableView.SelectionMode.SingleSelection)
+        self.recent_table.verticalHeader().setDefaultSectionSize(32)
         self.recent_table.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.ResizeToContents
         )
@@ -146,7 +168,7 @@ class DashboardView(QWidget):
 
         btn_row = QHBoxLayout()
         btn_row.addStretch()
-        self.view_history_btn = QPushButton("View Full History")
+        self.view_history_btn = QPushButton("View Full History →")
         self.view_history_btn.clicked.connect(lambda: self.navigate_requested.emit("history"))
         btn_row.addWidget(self.view_history_btn)
         recent_layout.addLayout(btn_row)
