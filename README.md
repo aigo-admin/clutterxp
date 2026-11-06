@@ -10,18 +10,18 @@ Use the **clean visual desktop app** or run quick commands from your terminal.
 
 ---
 
-## Why you can actually trust it
+## 🛡️ Why you can actually trust it
 
 Most file cleanup tools feel risky—what if they delete something important or move a file you didn't want touched? We built ClutterXP with ironclad safety guarantees:
 
-- 🛡️ **Never deletes or overwrites**: Files only move if the destination is safe. If a file with the same name already exists, ClutterXP renames the new one (e.g. `report (1).pdf`) or skips it. Your existing files are never replaced or destroyed.
-- 🎯 **Only moves what you tell it to**: If a file doesn't match a rule you created, it stays exactly where it is. No surprise moves, no mystery "unsorted" dump folders.
-- ↩️ **One-click instant undo**: Every action is saved in a local journal. If you ever change your mind, `clutterxp undo` (or a single click in the app) puts every file right back where it was originally.
-- 🔒 **100% private and offline**: Runs completely on your machine. No accounts, no cloud sync, no tracking, and zero internet requests.
+- **Never deletes or overwrites**: Files only move if the destination is safe. If a file with the same name already exists, ClutterXP renames the new one (e.g. `report (1).pdf`) or skips it. Your existing files are never replaced or destroyed.
+- **Only moves what you tell it to**: If a file doesn't match a rule you created, it stays exactly where it is. No surprise moves, no mystery "unsorted" dump folders.
+- **One-click instant undo**: Every action is saved in a local journal. If you ever change your mind, `clutterxp undo` (or a single click in the app) puts every file right back where it was originally.
+- **100% private and offline**: Runs completely on your machine. No accounts, no cloud sync, no tracking, and zero internet requests.
 
 ---
 
-## Getting Started
+## ⚡ Getting Started
 
 ### 1. Installation
 
@@ -72,7 +72,7 @@ clutterxp undo --yes
 
 ## Features that make life easier
 
-### 📁 Set it and forget it (Background Watcher)
+### Set it and forget it (Background Watcher)
 Turn on automatic sorting. Whenever a new download finishes, ClutterXP waits until it's completely written to disk, then quietly sorts it into place.
 ```bash
 clutterxp watch
@@ -83,13 +83,13 @@ clutterxp service install
 clutterxp service status
 ```
 
-### 🔍 Find and clean duplicate downloads
+### Find and clean duplicate downloads
 Downloaded the same PDF or installer three times? ClutterXP safely identifies duplicate files taking up storage, shows you where they live, and lets you isolate them safely.
 ```bash
 clutterxp duplicates scan ~/Downloads
 ```
 
-### ✏️ Customize your rules in seconds
+### Customize your rules in seconds
 Rules are dead simple. Group by keywords, file extensions, size, or age:
 - *"Move anything with `invoice` or `receipt` to `~/Documents/Invoices`"*
 - *"Move `.png` and `.jpg` with `wallpaper` to `~/Pictures/Wallpapers`"*
