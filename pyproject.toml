@@ -44,6 +44,13 @@ cxp = "clutterxp.cli.app:main"
 [project.gui-scripts]
 clutterxp-gui = "clutterxp.gui.app:main"
 
+[project.urls]
+Homepage = "https://github.com/aigo-admin/clutterxp"
+Documentation = "https://github.com/aigo-admin/clutterxp#readme"
+Repository = "https://github.com/aigo-admin/clutterxp.git"
+"Issue Tracker" = "https://github.com/aigo-admin/clutterxp/issues"
+Changelog = "https://github.com/aigo-admin/clutterxp/blob/main/CHANGELOG.md"
+
 [tool.hatch.version]
 path = "src/clutterxp/__init__.py"
 
