@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RulesTest",
+  "type": "object",
+  "required": ["schema_version", "file", "tokens", "traces", "decision"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "file": {
+      "type": "object",
+      "required": ["name", "ext", "size"],
+      "properties": {
+        "name": {"type": "string"},
+        "path": {"type": "string"},
+        "size": {"type": "integer"},
+        "ext": {"type": "string"},
+        "mtime_ns": {"type": "integer"}
+      },
+      "additionalProperties": true
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["raw", "camel"],
+      "properties": {
+        "raw": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "camel": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "traces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule", "priority", "matched", "reasons"],
+        "properties": {
+          "rule": {"type": "string"},
+          "priority": {"type": "integer"},
+          "matched": {"type": "boolean"},
+          "reasons": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "destination": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["match", "no_match", "ambiguous", "ignored"]},
+        "rule": {"type": ["string", "null"]},
+        "destination": {"type": ["string", "null"]},
+        "reason": {"type": "string"},
+        "candidates": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

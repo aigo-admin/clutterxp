@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HistoryList",
+  "type": "object",
+  "required": ["schema_version", "operations"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "batch_id", "status", "src_path"],
+        "properties": {
+          "id": {"type": "integer"},
+          "batch_id": {"type": "integer"},
+          "status": {"type": "string"},
+          "src_path": {"type": "string"},
+          "dst_path": {"type": ["string", "null"]},
+          "rule_name": {"type": ["string", "null"]},
+          "strategy": {"type": ["string", "null"]},
+          "size": {"type": ["integer", "null"]},
+          "mtime_ns": {"type": ["integer", "null"]},
+          "sha256": {"type": ["string", "null"]},
+          "created_dirs": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "created_at": {"type": "string"},
+          "finished_at": {"type": ["string", "null"]},
+          "undone_at": {"type": ["string", "null"]},
+          "error": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

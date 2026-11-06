@@ -1,0 +1,61 @@
+{
+  "src/clutterxp/models.py": "b1e788872e3c8613084416f6c2ecc181a1dd14d0c5f7260a892f129252a08ca9",
+  "src/clutterxp/interfaces.py": "6629b3e11cdc295796164712e61b6a4c4c3683c78953828d2b9c63a4b6e1513f",
+  "src/clutterxp/units.py": "48a084526415c01b1f9c3ac4e4715eb69748f2bcb722c979d5108c4c2dafe55e",
+  "schema_field_signature_sha256": "54b61d02ea8371ae1c11799d7b4a5ce0c3f7ded18bbf659cced57f7652c4930a",
+  "schema_field_signature": {
+    "Conditions": {
+      "max_size": "int | str | None",
+      "min_size": "int | str | None",
+      "newer_than": "int | str | None",
+      "older_than": "int | str | None"
+    },
+    "Config": {
+      "rules": "list[RuleSpec]",
+      "settings": "Settings",
+      "version": "Literal[1]",
+      "watch": "list[WatchEntry]"
+    },
+    "HistorySettings": {
+      "log_no_match": "bool",
+      "retention_days": "int"
+    },
+    "RuleSpec": {
+      "all_of": "list[str]",
+      "collision": "CollisionPolicy | None",
+      "conditions": "Conditions",
+      "create_destinations": "CreateDestinations | None",
+      "destination": "str",
+      "enabled": "bool",
+      "exclude": "list[str]",
+      "extensions": "list[str]",
+      "keywords": "list[str]",
+      "match": "MatchMode | None",
+      "name": "str",
+      "priority": "int"
+    },
+    "Settings": {
+      "allow_chain": "bool",
+      "case_sensitive": "bool",
+      "collision": "CollisionPolicy",
+      "confirm_threshold": "int",
+      "create_destinations": "CreateDestinations",
+      "follow_symlinks": "bool",
+      "history": "HistorySettings",
+      "ignore": "list[str]",
+      "match": "MatchMode",
+      "record_hash": "bool",
+      "settle_seconds": "float",
+      "skip_hidden": "bool",
+      "verify_copy": "Literal['size', 'hash']"
+    },
+    "WatchEntry": {
+      "ignore": "list[str]",
+      "initial_scan": "bool",
+      "path": "str",
+      "recursive": "bool",
+      "rules": "Literal['all'] | list[str]",
+      "settle_seconds": "float | None"
+    }
+  }
+}

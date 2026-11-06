@@ -1,0 +1,15 @@
+[Unit]
+Description=ClutterXP folder watcher (automatic file sorting)
+Documentation=https://example.invalid/clutterxp
+After=default.target
+
+[Service]
+Type=simple
+# `clutterxp service install` replaces the path below with the real executable path.
+ExecStart=%h/.local/bin/clutterxp watch --no-color
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

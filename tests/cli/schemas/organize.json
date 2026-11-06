@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OrganizeResult",
+  "type": "object",
+  "required": ["schema_version", "command", "dry_run", "summary", "actions"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "command": {"type": "string", "const": "organize"},
+    "dry_run": {"type": "boolean"},
+    "batch_id": {"type": ["integer", "null"]},
+    "summary": {
+      "type": "object",
+      "required": ["moved", "unmatched", "ambiguous", "blocked", "failed"],
+      "properties": {
+        "moved": {"type": "integer", "minimum": 0},
+        "unmatched": {"type": "integer", "minimum": 0},
+        "ambiguous": {"type": "integer", "minimum": 0},
+        "blocked": {"type": "integer", "minimum": 0},
+        "failed": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["status", "src"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["will_move", "will_move_renamed", "ambiguous", "no_match", "ignored", "blocked", "failed", "moved"]
+          },
+          "src": {"type": "string"},
+          "dst": {"type": ["string", "null"]},
+          "rule": {"type": ["string", "null"]},
+          "matched_by": {"type": "string"},
+          "candidates": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "code": {"type": "string"},
+          "message": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

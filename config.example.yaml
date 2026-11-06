@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=./clutterxp.schema.json
+# ClutterXP example configuration. Copy to ~/.config/clutterxp/config.yaml
+# (or run `clutterxp init`). Every name, keyword and folder below is an EXAMPLE:
+# nothing is built in. Edit, delete and add your own.
+
+version: 1
+
+settings:
+  collision: skip              # skip | rename   (what to do if the destination file name exists)
+  create_destinations: leaf    # never | leaf | all
+  match: token                 # default keyword mode: token | prefix | substring
+  case_sensitive: false
+  skip_hidden: true
+  follow_symlinks: false
+  confirm_threshold: 10        # ask before moving more than this many files at once
+  settle_seconds: 3            # how long a file must be quiet before the watcher moves it
+  verify_copy: size            # size | hash (only matters for cross-filesystem moves)
+  record_hash: false
+  history:
+    retention_days: 365
+    log_no_match: false
+  ignore: []                   # extra patterns to ignore everywhere
+  allow_chain: false           # keep false: destinations must not live inside watched folders
+
+# Folders to watch (and process with `clutterxp organize` when no path is given).
+# ANY folder works; Downloads is just an example.
+watch:
+  - path: ~/Downloads
+    recursive: false
+    settle_seconds: 3
+    rules: all                 # or a list of rule names that apply to this folder
+    initial_scan: false
+  - path: ~/Desktop
+    recursive: false
+    rules: [Screenshots, Invoices]
+    ignore: ["*.log"]
+
+rules:
+  - name: ProjectAlpha
+    priority: 10               # lower number wins
+    keywords: [alpha, pa, alpha-ctf]   # short aliases like "pa" match whole tokens only
+    destination: ~/Projects/ProjectAlpha
+    collision: rename
+
+  - name: Invoices
+    priority: 20
+    keywords: [invoice, inv, bill, receipt]
+    exclude: [draft]
+    extensions: [pdf, png, jpg]
+    destination: ~/Documents/Invoices/{year}/{month}
+
+  - name: College
+    priority: 30
+    keywords: [assignment, semester, lab, lecture]
+    destination: ~/College
+
+  - name: Screenshots
+    priority: 40
+    keywords: ["regex:^screenshot[ _-]"]
+    extensions: [png]
+    destination: ~/Pictures/Screenshots/{mtime:%Y-%m}
+
+  - name: Installers
+    priority: 50
+    extensions: [deb, appimage, run, rpm]
+    conditions:
+      min_size: 1MB
+    destination: ~/Software/Installers
+
+  - name: OldArchives
+    priority: 90
+    extensions: [zip, tar.gz, 7z]
+    conditions:
+      older_than: 30d
+    destination: ~/Archive/{year}
+    collision: rename

@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DuplicatesResult",
+  "type": "object",
+  "required": ["schema_version", "scanned", "exact", "hardlinks", "potential", "summary"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "scanned": {
+      "type": "object",
+      "required": ["folders", "files", "bytes"],
+      "properties": {
+        "folders": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "files": {"type": "integer"},
+        "bytes": {"type": "integer"}
+      },
+      "additionalProperties": false
+    },
+    "exact": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sha256", "size", "wasted_bytes", "files"],
+        "properties": {
+          "sha256": {"type": "string"},
+          "size": {"type": "integer"},
+          "wasted_bytes": {"type": "integer"},
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "mtime_ns", "inode"],
+              "properties": {
+                "path": {"type": "string"},
+                "mtime_ns": {"type": "integer"},
+                "inode": {"type": "integer"}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "hardlinks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["files"],
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "potential": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["note", "files"],
+        "properties": {
+          "note": {"type": "string"},
+          "files": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["exact_groups", "wasted_bytes", "potential_groups"],
+      "properties": {
+        "exact_groups": {"type": "integer"},
+        "wasted_bytes": {"type": "integer"},
+        "potential_groups": {"type": "integer"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
