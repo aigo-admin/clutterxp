@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/aigo-admin/clutterxp/main/assets/clutterxp_logo.png" alt="ClutterXP Logo" width="240">
+  <img src="https://raw.githubusercontent.com/aigo-admin/clutterxp/0ec772e48eaf1022d81824e19f89d171e1df8640/assets/clutterxp_logo.png" alt="ClutterXP Logo" width="240">
 </p>
 
 <h1 align="center">ClutterXP</h1>
