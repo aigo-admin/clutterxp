@@ -35,6 +35,7 @@ from PySide6.QtWidgets import (
 from clutterxp.config.schema import WatchEntry
 from clutterxp.gui.api import GuiApi
 from clutterxp.gui.workers import run_in_worker
+from clutterxp.models import ConfigError
 
 _EMPTY_INDEX = QModelIndex()
 
@@ -280,7 +281,10 @@ class FoldersView(QWidget):
             self.refresh()
 
         def _on_err(exc: Exception) -> None:
-            QMessageBox.critical(self, "Error Adding Folder", str(exc))
+            msg = str(exc)
+            if isinstance(exc, ConfigError) and exc.problems:
+                msg += ":\n\n• " + "\n• ".join(exc.problems)
+            QMessageBox.critical(self, "Error Adding Folder", msg)
 
         run_in_worker(_do_add, on_result=_on_done, on_error=_on_err)
 
@@ -306,7 +310,10 @@ class FoldersView(QWidget):
                 self.refresh()
 
             def _on_err(exc: Exception) -> None:
-                QMessageBox.critical(self, "Error Updating Settings", str(exc))
+                msg = str(exc)
+                if isinstance(exc, ConfigError) and exc.problems:
+                    msg += ":\n\n• " + "\n• ".join(exc.problems)
+                QMessageBox.critical(self, "Error Updating Settings", msg)
 
             run_in_worker(_do_edit, on_result=_on_done, on_error=_on_err)
 
@@ -336,7 +343,10 @@ class FoldersView(QWidget):
                 self.refresh()
 
             def _on_err(exc: Exception) -> None:
-                QMessageBox.critical(self, "Error Removing Folder", str(exc))
+                msg = str(exc)
+                if isinstance(exc, ConfigError) and exc.problems:
+                    msg += ":\n\n• " + "\n• ".join(exc.problems)
+                QMessageBox.critical(self, "Error Removing Folder", msg)
 
             run_in_worker(_do_remove, on_result=_on_done, on_error=_on_err)
 

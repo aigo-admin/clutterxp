@@ -36,11 +36,18 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from clutterxp.config.placeholders import validate_destination_template
 from clutterxp.config.schema import Conditions, RuleSpec
 from clutterxp.gui.api import GuiApi
 from clutterxp.gui.models_qt import RulesTableModel
 from clutterxp.gui.workers import run_in_worker
-from clutterxp.models import CollisionPolicy, CreateDestinations, MatchMode, RuleTrace
+from clutterxp.models import (
+    CollisionPolicy,
+    ConfigError,
+    CreateDestinations,
+    MatchMode,
+    RuleTrace,
+)
 
 _EMPTY_INDEX = QModelIndex()
 
@@ -171,7 +178,7 @@ class RuleEditorDialog(QDialog):
         # Template helper chips/buttons
         chips_layout = QHBoxLayout()
         chips_layout.addWidget(QLabel("Insert template:"))
-        for placeholder in ["{year}", "{month}", "{day}", "{ext}", "{stem}"]:
+        for placeholder in ["{year}", "{month}", "{day}", "{ext}", "{rule}"]:
             btn = QPushButton(placeholder)
             btn.setMaximumWidth(60)
             btn.clicked.connect(lambda _, ph=placeholder: self._insert_placeholder(ph))
@@ -239,7 +246,7 @@ class RuleEditorDialog(QDialog):
         sample = sample.replace("{month}", f"{now.month:02d}")
         sample = sample.replace("{day}", f"{now.day:02d}")
         sample = sample.replace("{ext}", "pdf")
-        sample = sample.replace("{stem}", "sample_invoice")
+        sample = sample.replace("{rule}", self.name_edit.text().strip() or "MyRule")
         try:
             expanded = str(Path(sample).expanduser())
             self.dest_preview_label.setText(f"Preview: {expanded}")
@@ -255,6 +262,15 @@ class RuleEditorDialog(QDialog):
         destination = self.dest_edit.text().strip()
         if not destination:
             QMessageBox.warning(self, "Validation Error", "Destination cannot be empty.")
+            return
+
+        p_errors = validate_destination_template(destination)
+        if p_errors:
+            QMessageBox.warning(
+                self,
+                "Invalid Destination Template",
+                "Destination template has errors:\n• " + "\n• ".join(p_errors),
+            )
             return
 
         keywords = [k.strip() for k in self.keywords_edit.text().split(",") if k.strip()]
@@ -440,7 +456,10 @@ class RulesView(QWidget):
                 self.api.config_save_rule(rule_spec, is_new=True)
 
             def _on_err(exc: Exception) -> None:
-                QMessageBox.critical(self, "Error Adding Rule", str(exc))
+                msg = str(exc)
+                if isinstance(exc, ConfigError) and exc.problems:
+                    msg += ":\n\n• " + "\n• ".join(exc.problems)
+                QMessageBox.critical(self, "Error Adding Rule", msg)
 
             run_in_worker(_do_add, on_result=lambda _: self.refresh(), on_error=_on_err)
 
@@ -463,7 +482,10 @@ class RulesView(QWidget):
                 self.api.config_save_rule(rule_spec, is_new=False)
 
             def _on_err(exc: Exception) -> None:
-                QMessageBox.critical(self, "Error Editing Rule", str(exc))
+                msg = str(exc)
+                if isinstance(exc, ConfigError) and exc.problems:
+                    msg += ":\n\n• " + "\n• ".join(exc.problems)
+                QMessageBox.critical(self, "Error Editing Rule", msg)
 
             run_in_worker(_do_edit, on_result=lambda _: self.refresh(), on_error=_on_err)
 
@@ -490,7 +512,10 @@ class RulesView(QWidget):
                 self.api.config_remove_rule(rule.name)
 
             def _on_err(exc: Exception) -> None:
-                QMessageBox.critical(self, "Error Removing Rule", str(exc))
+                msg = str(exc)
+                if isinstance(exc, ConfigError) and exc.problems:
+                    msg += ":\n\n• " + "\n• ".join(exc.problems)
+                QMessageBox.critical(self, "Error Removing Rule", msg)
 
             run_in_worker(_do_del, on_result=lambda _: self.refresh(), on_error=_on_err)
 
