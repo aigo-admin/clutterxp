@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from PySide6.QtCore import QTimer
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -49,6 +49,17 @@ class ClutterXPMainWindow(QMainWindow):
         self.setWindowTitle("ClutterXP - Safe, Intelligent File Organizer")
         self.resize(1080, 720)
         self.setMinimumSize(880, 580)
+
+        # Set application and window icon
+        icon_path = Path(__file__).resolve().parent.parent / "assets" / "clutterxp_logo.png"
+        if not icon_path.exists():
+            icon_path = Path(__file__).resolve().parents[3] / "assets" / "clutterxp_logo.png"
+        if icon_path.exists():
+            icon = QIcon(str(icon_path))
+            self.setWindowIcon(icon)
+            app_inst = QApplication.instance()
+            if app_inst is not None:
+                app_inst.setWindowIcon(icon)
 
         app_instance = QApplication.instance()
         if app_instance is not None:

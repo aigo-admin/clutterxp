@@ -1,4 +1,4 @@
 """ClutterXP - configurable, safe, fast file organizer."""
 
-__version__ = "1.2.2"
+__version__ = "1.2.3"
 
