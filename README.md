@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/aigo-admin/clutterxp/0ec772e48eaf1022d81824e19f89d171e1df8640/assets/clutterxp_logo.png" alt="ClutterXP Logo" width="240">
+  <img src="https://raw.githubusercontent.com/aigo-admin/clutterxp/main/assets/clutterxp_logo.png" alt="ClutterXP Logo" width="220">
 </p>
 
 <h1 align="center">ClutterXP</h1>
@@ -11,7 +11,7 @@
 
 ---
 
-| Category | Badges |
+| | |
 |:---|:---|
 | **Package** | [![PyPI Latest Release](https://img.shields.io/pypi/v/clutterxp.svg)](https://pypi.org/project/clutterxp/) [![Supported Python](https://img.shields.io/pypi/pyversions/clutterxp.svg)](https://pypi.org/project/clutterxp/) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/aigo-admin/clutterxp/blob/main/LICENSE) |
 | **Quality** | [![Test Suite](https://img.shields.io/badge/tests-584%20passed-brightgreen.svg)](https://github.com/aigo-admin/clutterxp) [![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff) [![Checked with mypy](https://img.shields.io/badge/mypy-checked-blue.svg)](http://mypy-lang.org/) |
